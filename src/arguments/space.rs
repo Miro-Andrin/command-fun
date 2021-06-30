@@ -3,11 +3,11 @@ use crate::Argumet;
 /// One or more space
 pub struct Space;
 impl Argumet for Space {
-    fn parse<'a>(input: &'a str) -> Option<(Self, &'a str)> {
+    fn parse<'a>(input: &'a str) -> Result<(Self, &'a str), ()> {
         if !input.starts_with(" ") {
-            return None;
+            return Err(());
         } else {
-            Some((Space, input.trim_start()))
+            Ok((Space, input.trim_start()))
         }
     }
 }

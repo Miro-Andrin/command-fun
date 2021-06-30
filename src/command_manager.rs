@@ -1,4 +1,4 @@
-use crate::{Command, CommandCaller, CommandError, CommandsResult};
+use crate::{Command, CommandError, CommandsResult};
 use std::collections::HashMap;
 
 #[derive(Debug)]

@@ -21,25 +21,25 @@ macro_rules! impl_arg_positive_number {
     ($num:ident) => {
         
         impl crate::Argumet for $num {
-            fn parse<'a>(input: &'a str) -> Option<(Self, &'a str)> {
+            fn parse<'a>(input: &'a str) -> Result<(Self, &'a str),()> {
                 
                 let (sign, number, rest) = split_off_number(input);
 
                 if sign == "-" {
                     // Then it cant be a possitive number
-                    return None;
+                    return Err(());
                 }
 
                 if number.is_empty() {
-                    return None;
+                    return Err(());
                 }
 
                 let res = match number.parse() {
                     Ok(x) => x,
-                    Err(_) => return None,
+                    Err(_) => return Err(()),
                 };
 
-                Some((res,rest))
+                Ok((res,rest))
 
             }
         }
@@ -56,20 +56,20 @@ impl_arg_positive_number!(usize);
 macro_rules! impl_arg_number {
     ($num:ident) => {
         impl crate::Argumet for $num {
-            fn parse<'a>(input: &'a str) -> Option<(Self, &'a str)> {
+            fn parse<'a>(input: &'a str) -> Result<(Self, &'a str),()> {
                 
                 let (sign, number, rest) = split_off_number(input);
         
                 if number.is_empty() {
-                    return None;
+                    return Err(());
                 }
                 
                 let res = match (&input[0..sign.len()+number.len()]).parse() {
                     Ok(x) => x,
-                    Err(_) => return None,
+                    Err(_) => return Err(()),
                 };
         
-                Some((res,rest))
+                Ok((res,rest))
             }
         }
     };
@@ -108,16 +108,16 @@ fn split_off_float(input: &str) -> (&str, &str) {
 macro_rules! impl_arg_float {
     ($num:ident) => {
         impl crate::Argumet for $num {
-            fn parse<'a>(input: &'a str) -> Option<(Self, &'a str)> {
+            fn parse<'a>(input: &'a str) -> Result<(Self, &'a str),()> {
                 
                 let (number, rest) = split_off_float(input);
 
                 let res = match number.parse() {
                     Ok(x) => x,
-                    Err(_) => return None,
+                    Err(_) => return Err(()),
                 };
 
-                Some((res,rest))
+                Ok((res,rest))
             }
         }
     };
