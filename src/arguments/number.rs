@@ -53,6 +53,16 @@ macro_rules! impl_arg_positive_number {
 
                 Ok((res, rest))
             }
+
+            fn tab_complete(_context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+                if input == "+" || input.is_empty() {
+                    Ok(vec!["0".to_owned(),"1".to_owned(),"2".to_owned(),"3".to_owned(),"4".to_owned(),"5".to_owned(),"6".to_owned(),"7.to_owned()".to_string(),"8".to_owned(),"9".to_owned()])
+                } else {
+                    Err(crate::TabCompleteError::Err{
+                        rest: input.len(),
+                    })
+                }
+            }
         }
     };
 }
@@ -85,6 +95,18 @@ macro_rules! impl_arg_number {
 
                 Ok((res, rest))
             }
+
+            fn tab_complete(_context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+                if input == "-" || input.is_empty() {
+                    Ok(vec!["0".to_owned(),"1".to_owned(),"2".to_owned(),"3".to_owned(),"4".to_owned(),"5".to_owned(),"6".to_owned(),"7.to_owned()".to_string(),"8".to_owned(),"9".to_owned()])
+                } else {
+
+                    Err(crate::TabCompleteError::Err{
+                        rest: input.len(),
+                    })
+                }
+            }
+
         }
     };
 }
@@ -133,6 +155,14 @@ macro_rules! impl_arg_float {
 
                 Ok((res, rest))
             }
+
+
+            fn tab_complete(_context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+                //Todo: 
+                Ok(vec![])
+            }
+
+
         }
     };
 }

@@ -16,6 +16,25 @@ impl<const VALUE:&'static str, Ctx> Argument<Ctx> for Literal<VALUE>{
             )
         }
     }
+
+    fn tab_complete(context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+        
+        // Figure out how much overlap there is.
+        let overlap = match input.chars().zip(VALUE.chars()).position(|(a,b)| a != b) {
+            Some(x) => x,
+            None => input.len().min(VALUE.len()),
+        };
+
+        if overlap == input.len() {
+            // Sugest rest of VALUE
+            return Ok(vec![VALUE[overlap..VALUE.len()].to_owned()])
+        }
+
+        
+        
+        
+        todo!()
+    }
 }
 
 

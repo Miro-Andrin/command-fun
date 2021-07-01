@@ -13,6 +13,14 @@ pub enum CommandError {
     Err { msg: String, rest: usize },
 }
 
+#[derive(Debug)]
+pub enum TabCompleteError {
+    Err {
+        rest: usize,
+    }
+}
+
+
 type CommandsResult<X> = Result<X, CommandError>;
 
 pub struct Command<Ctx> {
@@ -40,6 +48,8 @@ impl<Ctx> Command<Ctx> {
 
 pub trait Argument<Ctx>: Sized {
     fn parse<'a>(input: &'a str) -> Result<(Self, &'a str), CommandError>;
+
+    fn tab_complete(ctx: Ctx,input: &str) -> Result<Vec<String>, TabCompleteError>;
 }
 
 #[cfg(test)]
