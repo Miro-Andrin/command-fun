@@ -67,13 +67,10 @@ mod tests {
             // The reason empty is not part of the tuple is because parsing tuples assumes that there is at least one
             // space between every argument. Making it so that the command requires a trailing whitepsace.  
             let (_empty, _rest) : (Empty, &str) = Argument::<usize>::parse(rest)?;
-
             Ok(args.1  + args.2 + ctx.clone() as i64)
         });
 
-
         let res = command.call(&mut 10, "/add 10 10");
-
         assert_eq!(30, res.unwrap())
     }
 }

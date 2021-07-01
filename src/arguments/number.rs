@@ -157,7 +157,7 @@ macro_rules! impl_arg_float {
             }
 
 
-            fn tab_complete(_context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+            fn tab_complete(_context: Ctx, _input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
                 //Todo: 
                 Ok(vec![])
             }

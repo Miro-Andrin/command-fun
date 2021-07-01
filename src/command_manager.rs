@@ -34,7 +34,7 @@ impl<Ctx> CommandMgr<Ctx> {
                 self.mapping.insert(start.to_owned(), vec![c]);
             }
         };
-        
+
         Ok(())
     }
 

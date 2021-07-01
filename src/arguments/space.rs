@@ -14,12 +14,23 @@ impl<Ctx> Argument<Ctx> for Space {
         }
     }
 
-    fn tab_complete(context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+    fn tab_complete(_context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
         if input == "" {
             return Ok(vec![" ".to_owned()]);
         }
+        if input == " "{
+            return Ok(vec![]);
+        }
 
-        todo!()
+        if input.starts_with(" "){
+            Err(TabCompleteError::Err{
+                rest: input.len()-" ".len(),
+            })
+        } else {
+            Err(TabCompleteError::Err{
+                rest: input.len(),
+            })
+        }
     }
 }
 
@@ -30,8 +41,17 @@ impl<Ctx> Argument<Ctx> for Spaces {
         Ok((Spaces, input.trim_start()))
     }
 
-    fn tab_complete(context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
-        Ok(vec![])
+    fn tab_complete(_context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+
+        let rest = input.trim_start();
+
+        if rest.is_empty() {
+            return  Ok(vec![]);
+        } else {
+            Err(TabCompleteError::Err {
+                rest: rest.len(),
+            })
+        }
     }
 }
 
@@ -53,7 +73,7 @@ impl<Ctx> Argument<Ctx> for Empty {
         }
     }
 
-    fn tab_complete(context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+    fn tab_complete(_context: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
         let rest = input.trim_start();
 
         if !rest.is_empty() {
