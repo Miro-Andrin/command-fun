@@ -37,4 +37,62 @@ impl<const VALUE:&'static str, Ctx> Argument<Ctx> for Literal<VALUE>{
     }
 }
 
+pub struct LiteralAdd;
+impl LiteralAdd {
+    const LITERAL: &'static str = "add";
+}
+impl<Ctx> Argument<Ctx> for LiteralAdd {
+
+    fn parse<'a>(input: &'a str) -> Result<(Self, &'a str), CommandError> {
+        if input.starts_with(Self::LITERAL) {
+            Ok((Self, &input[Self::LITERAL.len()..]))
+        } else {
+            Err(CommandError::Err {
+                msg: format!("Expected {}", Self::LITERAL),
+                rest: input.len(),
+            })
+        }
+    }
+
+    fn tab_complete(_ctx: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+        if Self::LITERAL.starts_with(input) {
+            Ok(vec![String::from(&Self::LITERAL[input.len()..])])
+        } else {
+            Ok(vec![])
+        }
+    }
+}
+
+macro_rules! lit {
+    ($lit:ident) => {
+        pub struct $lit;
+        impl $lit {
+            const LITERAL: &'static str = stringify!($lit);
+        }
+        impl<Ctx> Argument<Ctx> for $lit {
+
+            fn parse<'a>(input: &'a str) -> Result<(Self, &'a str), CommandError> {
+                if input.starts_with(Self::LITERAL) {
+                    Ok((Self, &input[Self::LITERAL.len()..]))
+                } else {
+                    Err(CommandError::Err {
+                        msg: format!("Expected {}", Self::LITERAL),
+                        rest: input.len(),
+                    })
+                }
+            }
+
+            fn tab_complete(_ctx: Ctx, input: &str) -> Result<Vec<String>, crate::TabCompleteError> {
+                if Self::LITERAL.starts_with(input) {
+                    Ok(vec![String::from(&Self::LITERAL[input.len()..])])
+                } else {
+                    Ok(vec![])
+                }
+            }
+        }
+    };
+}
+
+lit!(LiteralNone);
+
 
