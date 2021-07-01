@@ -1,4 +1,6 @@
-use std::collections::HashMap;
+
+#![feature(const_generics)]
+
 
 mod arguments;
 mod command_manager;
@@ -37,29 +39,27 @@ impl<Ctx> Command<Ctx> {
     }
 }
 
-pub trait Argumet: Sized {
-    fn parse<'a>(input: &'a str) -> Result<(Self, &'a str), ()>;
+pub trait Argument: Sized {
+    fn parse<'a>(input: &'a str) -> Result<(Self, &'a str), CommandError>;
 }
 
 #[cfg(test)]
 mod tests {
 
     use super::*;
-
+    use crate::arguments::Space;
+    use crate::arguments::Literal;
+    
     #[test]
     fn it_works() {
         let command = Command::new("/add", |ctx: &mut usize, input: &str| {
-            let (number, rest) = u32::parse(input).map_err(|_| CommandError::Err {
-                msg: "Unable to parse number".to_string(),
-                rest: input.len(),
-            })?;
-
-
-            Ok(number as i64 + ctx.clone() as i64)
+            let (args, rest) : ((Literal::<"/add">,i64, i64), &str) = Argument::parse(input)?;
+            Ok(args.1  + args.2 + ctx.clone() as i64)
         });
 
-        let res = command.call(&mut 10, "10");
 
-        assert_eq!(20, res.unwrap())
+        let res = command.call(&mut 10, "/add 10 10");
+
+        assert_eq!(30, res.unwrap())
     }
 }
