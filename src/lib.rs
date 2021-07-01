@@ -23,23 +23,22 @@ pub struct Command<Ctx> {
 }
 
 impl<Ctx> Command<Ctx> {
-    fn new<S, F>(start: S, func: F) -> Self
+    pub fn new<F>(start: &str, func: F) -> Self
     where
-        S: AsRef<str>,
         F: Fn(&mut Ctx, &str) -> CommandsResult<i64> + 'static,
     {
         Command {
-            start: start.as_ref().to_owned(),
+            start: start.to_owned(),
             exec: Box::new(func),
         }
     }
 
-    fn call(&self, ctx: &mut Ctx, input: &str) -> CommandsResult<i64> {
+    pub fn call(&self, ctx: &mut Ctx, input: &str) -> CommandsResult<i64> {
         (self.exec)(ctx, input)
     }
 }
 
-pub trait Argument: Sized {
+pub trait Argument<Ctx>: Sized {
     fn parse<'a>(input: &'a str) -> Result<(Self, &'a str), CommandError>;
 }
 
@@ -47,13 +46,18 @@ pub trait Argument: Sized {
 mod tests {
 
     use super::*;
-    use crate::arguments::Space;
     use crate::arguments::Literal;
+    use crate::arguments::Empty;
     
     #[test]
     fn it_works() {
         let command = Command::new("/add", |ctx: &mut usize, input: &str| {
-            let (args, rest) : ((Literal::<"/add">,i64, i64), &str) = Argument::parse(input)?;
+            let (args, rest) : ((Literal::<"/add">,i64, i64), &str) = Argument::<usize>::parse(input)?;
+            // The rest of the string must be empty
+            // The reason empty is not part of the tuple is because parsing tuples assumes that there is at least one
+            // space between every argument. Making it so that the command requires a trailing whitepsace.  
+            let (_empty, _rest) : (Empty, &str) = Argument::<usize>::parse(rest)?;
+
             Ok(args.1  + args.2 + ctx.clone() as i64)
         });
 
@@ -63,3 +67,5 @@ mod tests {
         assert_eq!(30, res.unwrap())
     }
 }
+
+

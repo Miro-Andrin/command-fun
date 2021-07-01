@@ -12,13 +12,10 @@ pub struct CommandMgr<Ctx> {
 }
 
 impl<Ctx> CommandMgr<Ctx> {
-    fn add<S, F>(&mut self, start: S, command: F) -> Result<(), CommandAddError>
+    fn add<F>(&mut self, start: &str, command: F) -> Result<(), CommandAddError>
     where
         F: Fn(&mut Ctx, &str) -> CommandsResult<i64> + 'static,
-        S: AsRef<str>,
     {
-        let start = start.as_ref().to_owned();
-
         if start.is_empty() {
             return Err(CommandAddError::StartWasEmpty);
         }
@@ -27,17 +24,17 @@ impl<Ctx> CommandMgr<Ctx> {
             return Err(CommandAddError::StartContainsSpace);
         }
 
-        let c = Command::new(start.clone(), command);
+        let c = Command::new(start, command);
 
-        match self.mapping.get_mut(&start) {
+        match self.mapping.get_mut(&start.to_owned()) {
             Some(list) => {
                 list.push(c);
             }
             None => {
-                self.mapping.insert(start, vec![c]);
+                self.mapping.insert(start.to_owned(), vec![c]);
             }
         };
-
+        
         Ok(())
     }
 
